@@ -1,18 +1,44 @@
 const core = require('@actions/core');
-const wait = require('./wait');
+const { Octokit } = require('@octokit/core');
+const { paginateRest } = require('@octokit/plugin-paginate-rest');
 
-
-// most @actions toolkit packages have async methods
 async function run() {
   try {
-    const ms = core.getInput('milliseconds');
-    core.info(`Waiting ${ms} milliseconds ...`);
+    const owner = core.getInput('owner');
+    const repo = core.getInput('repo');
+    const token = core.getInput('github-token', {required: true});
+    const pullNumber = core.getInput('pull_number');
+    const codeOwners = core.getInput('codeowners', {required: true});
 
-    core.debug((new Date()).toTimeString()); // debug is only output if you set the secret `ACTIONS_RUNNER_DEBUG` to true
-    await wait(parseInt(ms));
-    core.info((new Date()).toTimeString());
+    const octokit = Octokit.plugin(paginateRest);
+    const client = new octokit({auth: `token ${token}`});
 
-    core.setOutput('time', new Date().toTimeString());
+    const results = await client.paginate(
+      `GET /repos/{owner}/{repo}/pulls/{pull_number}/reviews`,
+      {
+        owner,
+        repo,
+        pull_number: pullNumber,
+        per_page: 100
+      }
+    );
+
+    let totalApprovals = 0;
+    const codeOwnerApprovals = 0;
+
+    core.info(`codeOwners: ${codeOwners}`);
+
+    for (const result of results) {
+      if (result.state !== 'APPROVED') continue;
+
+      totalApprovals = totalApprovals + 1;
+
+      core.info(result);
+    }
+
+    core.setOutput('approval_count', totalApprovals);
+    core.setOutput('co_approval_count', codeOwnerApprovals);
+    core.setOutput('non_co_approval_count', totalApprovals - codeOwnerApprovals);
   } catch (error) {
     core.setFailed(error.message);
   }

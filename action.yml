@@ -1,13 +1,34 @@
-name: 'Wait'
-description: 'Wait a designated number of milliseconds'
+name: "PR reviews"
+description: "Outputs details about reviews on a PR"
+author: "Walter Barros Galvao Neto"
 inputs:
-  milliseconds:  # id of input
-    description: 'number of milliseconds to wait'
+  github-token:
+    description: The GitHub token used to create an authenticated client.  Defaults to github provided token.
+    default: ${{ github.token }}
+    required: false
+  owner:
+    description: The GitHub repo owner.  Defaults to github current repo owner.
+    default: ${{ github.repository_owner }}
+    required: false
+  repo:
+    description: The GitHub repo name.  Defaults to github current repo name.
+    default: ${{ github.event.repository.name }}
+    required: false
+  pull_number:
+    description: The GitHub pull request number.  Defaults to github current pull request number.
+    default: ${{ github.event.issue.number }}
+    required: false
+  codeowners:
+    description: A string containing the codeowner names
     required: true
-    default: '1000'
+
 outputs:
-  time: # output will be available to future steps
-    description: 'The message to output'
+  approval_count:
+    description: "Total amount of approvals"
+  co_approval_count:
+    description: "Total amount of code-owner approvals"
+  non_co_approval_count:
+    description: "Total amount of non-code-owner approvals"
 runs:
-  using: 'node12'
-  main: 'dist/index.js'
+  using: "node12"
+  main: "dist/index.js"
