@@ -16,7 +16,7 @@ inputs:
     required: false
   pull_number:
     description: The GitHub pull request number.  Defaults to github current pull request number.
-    default: ${{ github.event.issue.number }}
+    default: ${{ github.event.pull_request.number }}
     required: false
   codeowners:
     description: A string containing the codeowner names
