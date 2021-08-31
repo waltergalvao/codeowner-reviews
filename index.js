@@ -46,12 +46,13 @@ async function run() {
 
   const changesRequested = Object.values(reviewers).filter(review => review.state === 'REQUEST_CHANGES').length;
 
-  core.info(`Total: ${totalApprovals}`);
-  core.info(`CO: ${codeOwnerApprovals}`);
+  core.info(JSON.stringify(reviewers));
+  core.info(`Total Reviews: ${totalApprovals}`);
+  core.info(`CO Reviews: ${codeOwnerApprovals}`);
+  core.info(`Changes Requested: ${changesRequested}`);
 
   core.setOutput('approval_count', totalApprovals);
   core.setOutput('co_approval_count', codeOwnerApprovals);
-  core.setOutput('non_co_approval_count', totalApprovals - codeOwnerApprovals);
   core.setOutput('non_co_approval_count', totalApprovals - codeOwnerApprovals);
   core.setOutput('changes_requested_count', changesRequested);
 }
