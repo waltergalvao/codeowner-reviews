@@ -22,22 +22,38 @@ async function run() {
     }
   );
 
+
   let totalApprovals = 0;
   let codeOwnerApprovals = 0;
+  const reviewers = {};
 
+  // Results has whole history of reviews, meaning multiple per user
+  // We just want the last one, as results are ordered
   for (const result of results) {
-    if (result.state !== 'APPROVED') continue;
+    reviewers[result.user.login] = result;
+  }
 
+  for (const review of Object.values(reviewers)) {
+    if (review.state !== 'APPROVED') continue;
+
+    core.info(JSON.stringify(review));
     totalApprovals = totalApprovals + 1;
 
-    if (codeOwners.includes(`@${result.user.login}`)) {
+    if (codeOwners.includes(`@${review.user.login}`)) {
       codeOwnerApprovals = codeOwnerApprovals + 1;
     }
   }
 
+  const changesRequested = Object.values(reviewers).filter(review => review.state === 'REQUEST_CHANGES').length;
+
+  core.info(`Total: ${totalApprovals}`);
+  core.info(`CO: ${codeOwnerApprovals}`);
+
   core.setOutput('approval_count', totalApprovals);
   core.setOutput('co_approval_count', codeOwnerApprovals);
   core.setOutput('non_co_approval_count', totalApprovals - codeOwnerApprovals);
+  core.setOutput('non_co_approval_count', totalApprovals - codeOwnerApprovals);
+  core.setOutput('changes_requested_count', changesRequested);
 }
 
 run();

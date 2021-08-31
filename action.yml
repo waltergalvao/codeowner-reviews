@@ -29,6 +29,8 @@ outputs:
     description: "Total amount of code-owner approvals"
   non_co_approval_count:
     description: "Total amount of non-code-owner approvals"
+  changes_requested_count:
+    description: "Total amount of changes requested"
 runs:
   using: "node12"
   main: "dist/index.js"
