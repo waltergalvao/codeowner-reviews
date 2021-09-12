@@ -30,6 +30,8 @@ async function run() {
   // Results has whole history of reviews, meaning multiple per user
   // We just want the last one, as results are ordered
   for (const result of results) {
+    if (result.state === "COMMENTED") continue;
+    
     reviewers[result.user.login] = result;
   }
 
