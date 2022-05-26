@@ -30,7 +30,7 @@
     "@octokit/plugin-paginate-rest": "^2.15.1"
   },
   "devDependencies": {
-    "@vercel/ncc": "^0.31.0",
+    "@vercel/ncc": "^0.34.0",
     "eslint": "^7.4.0",
     "jest": "^27.2.0"
   }
